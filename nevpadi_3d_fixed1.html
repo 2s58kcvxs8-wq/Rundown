@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#081523">
+<title>НЕ ВПАДИ 3D — Поліцейський забіг</title>
+<style>
+:root{color-scheme:dark;--cyan:#4df5ff;--gold:#ffd34e;--glass:rgba(5,16,31,.78)}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07111d;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;touch-action:none}canvas{display:block;width:100%;height:100%;touch-action:none}#hud{position:fixed;inset:0;pointer-events:none;color:#fff;text-shadow:0 2px 8px #0008}.top{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.pill{background:rgba(4,17,33,.7);border:1px solid #a9d9ff44;border-radius:15px;padding:8px 12px;backdrop-filter:blur(8px);font-weight:800;font-size:14px;box-shadow:0 5px 18px #0003}.stats{display:flex;gap:7px}.meter{width:112px;height:5px;background:#ffffff30;border-radius:9px;margin-top:6px;overflow:hidden}.meter>i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#30e6fa,#6b8dff)}#toast{position:absolute;top:18%;left:50%;transform:translateX(-50%);font-weight:900;font-size:20px;color:#fff;text-align:center;opacity:0;transition:opacity .15s;white-space:nowrap;text-shadow:0 3px 12px #000}#overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(180deg,#06101a55,#06101acc);color:#fff;z-index:5}#panel{width:min(460px,100%);max-height:88dvh;overflow:auto;background:linear-gradient(145deg,rgba(10,30,51,.96),rgba(3,12,26,.96));border:1px solid #7ceeff55;border-radius:26px;padding:24px 22px;box-shadow:0 25px 90px #0009;text-align:center;backdrop-filter:blur(14px)}h1{font-size:clamp(32px,9vw,49px);line-height:1;margin:0 0 12px;font-weight:1000;letter-spacing:-1.5px;color:#65f4ff;text-shadow:0 0 28px #00c9ff55}p{color:#d5e6f7;line-height:1.5;margin:10px 0 18px}.small{font-size:13px;color:#a8c2dc}.btn{pointer-events:auto;display:block;width:100%;border:0;border-radius:15px;padding:15px 14px;margin-top:10px;background:linear-gradient(100deg,#09c8e6,#527aff);color:#03101e;font-size:18px;font-weight:950;box-shadow:0 8px 22px #00cfff28}.btn.secondary{background:#132b44;border:1px solid #5b88ae;color:#e8f7ff;font-size:15px;padding:12px}.tips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}.tip{background:#ffffff0a;border:1px solid #ffffff16;border-radius:12px;padding:10px 7px;font-size:13px;color:#d8e9fa}.hidden{display:none!important}#controls{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 16px);left:0;right:0;display:flex;justify-content:space-between;padding:0 20px;pointer-events:none;opacity:.68}#controls button{pointer-events:auto;width:60px;height:60px;border-radius:50%;border:1px solid #d8f7ff70;background:#06182c88;color:white;font-size:25px;font-weight:900;box-shadow:0 5px 18px #0003}#controls .group{display:flex;gap:10px}#pause{position:fixed;top:calc(env(safe-area-inset-top) + 62px);right:13px;z-index:3;pointer-events:auto;background:#07182bbb;color:white;border:1px solid #bdefff66;border-radius:12px;padding:7px 11px;font-size:17px}.hint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 90px);left:0;right:0;text-align:center;color:#d9f4ffb8;font-size:12px;letter-spacing:.3px}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+</head>
+<body>
+<div id="hud"><div class="top"><div class="pill">🏁 <span id="distance">0</span> м<div class="meter"><i id="progress"></i></div></div><div class="stats"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">🏆 <span id="best">0</span></div></div></div><div id="toast"></div><div class="hint" id="hint">СВАЙП ← → · СТРИБОК ↑ · КОВЗАННЯ ↓</div></div>
+<button id="pause" class="hidden" aria-label="Пауза">Ⅱ</button>
+<div id="controls" class="hidden"><div class="group"><button id="left" aria-label="Ліворуч">‹</button><button id="right" aria-label="Праворуч">›</button></div><div class="group"><button id="jump" aria-label="Стрибок">↑</button><button id="slide" aria-label="Ковзання">↓</button></div></div>
+<div id="overlay"><div id="panel"><h1>НЕ ВПАДИ 3D</h1><p>Ти — поліцейський на шаленому забігу крізь залізничну станцію. Ухиляйся від поїздів і бар’єрів, стрибай, ковзай та збирай монети.</p><div class="tips"><div class="tip">↔️ <b>Вліво / вправо</b><br>змінити колію</div><div class="tip">⬆️ <b>Свайп угору</b><br>стрибок</div><div class="tip">⬇️ <b>Свайп униз</b><br>ковзання</div><div class="tip">🚆 <b>Увага!</b><br>поїзди попереду</div></div><button id="start" class="btn">▶ ПОЧАТИ ЗАБІГ</button><button id="how" class="btn secondary">Як грати</button><p class="small">Працює на iPhone та комп’ютері. Для 3D-графіки потрібен інтернет.</p></div></div>
+<script type="module">
+import * as THREE from 'three';
+
+const $=id=>document.getElementById(id);
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x82cce8); scene.fog=new THREE.Fog(0x82cce8,42,175);
+const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,260); camera.position.set(0,4.2,8.8);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;document.body.prepend(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xdff7ff,0x263348,2.0));const sun=new THREE.DirectionalLight(0xfff0d2,3.0);sun.position.set(-8,18,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=22;sun.shadow.camera.bottom=-30;scene.add(sun);
+const mat=(color,roughness=.8,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
+const mats={asphalt:mat(0x303c4c),rail:mat(0x8c9ca8,.32,.8),wood:mat(0x4c5864),gold:mat(0xffc928,.3,.55),blue:mat(0x1763ad,.42,.25),navy:mat(0x102d4a),skin:mat(0xe7b58b),black:mat(0x101923),white:mat(0xf1f5f7),red:mat(0xf0444c),yellow:mat(0xffd64a),glass:mat(0x4c9bb8,.25,.25),concrete:mat(0x788b98),green:mat(0x24785d),sign:mat(0x0d233b)};
+const boxGeo=new THREE.BoxGeometry(1,1,1),sphereGeo=new THREE.SphereGeometry(.5,14,10),cylGeo=new THREE.CylinderGeometry(.5,.5,1,12);
+function mesh(geo,material,parent,x=0,y=0,z=0,sx=1,sy=1,sz=1){const o=new THREE.Mesh(geo,material);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
+// Track bed and three rails/lanes
+const ground=mesh(boxGeo,mats.asphalt,scene,0,-.45,-75,13,.8,190);ground.castShadow=false;
+for(let lane=-1;lane<=1;lane++){
+ const x=lane*2.65;
+ for(const side of [-.62,.62])mesh(boxGeo,mats.rail,scene,x+side,.02,-75,.11,.12,190);
+ for(let z=-170;z<25;z+=2.2)mesh(boxGeo,mats.wood,scene,x,.0,z,1.25,.11,.42);
+}
+// side walkways, fencing and city skyline
+for(const side of [-1,1]){
+ mesh(boxGeo,mats.concrete,scene,side*7.4,-.1,-75,1.8,.35,190);
+ for(let z=-168;z<15;z+=4){mesh(cylGeo,mats.rail,scene,side*6.55,.7,z,.08,1.5,.08);mesh(boxGeo,mats.rail,scene,side*6.55,1.25,z, .09,.08,4);}
+}
+const buildingMats=[mat(0x405b76),mat(0x526b80),mat(0x6b7787),mat(0x34485f),mat(0x8b8d91)];
+for(let side of [-1,1])for(let i=0;i<32;i++){
+ const z=-i*5.6-4,h=5+Math.random()*19,w=3+Math.random()*4,x=side*(10+Math.random()*7);
+ const b=mesh(boxGeo,buildingMats[i%buildingMats.length],scene,x,h/2-0.2,z,w,h,4+Math.random()*3);b.castShadow=false;
+ const windowMat=new THREE.MeshStandardMaterial({color:0xbcecff,emissive:0x315f7b,emissiveIntensity:.45,roughness:.3});
+ for(let yy=1.4;yy<h-1;yy+=1.65)for(let xx=-w/2+.5;xx<w/2-.3;xx+=.8){const win=mesh(boxGeo,windowMat,scene,x+xx,yy,z+2.03,.35,.62,.035);win.castShadow=false;}
+}
+// overhead station lamps and signs
+for(let z=-150;z<10;z+=18){for(let side of [-1,1]){mesh(boxGeo,mats.black,scene,side*5.6,4.2,z,.13,4.5,.13);mesh(boxGeo,mats.yellow,scene,side*5.6,6.3,z,.6,.13,.45);const light=new THREE.PointLight(0x9cecff,9,13,2);light.position.set(side*5.3,5.9,z);scene.add(light);}}
+// Player: recognizable police officer, modular animated limbs
+const player=new THREE.Group();scene.add(player);player.position.set(0,0,3.0);
+const body=new THREE.Group();player.add(body);
+mesh(boxGeo,mats.blue,body,0,1.22,0,.68,.82,.38);mesh(boxGeo,mats.navy,body,0,1.48,.01,.72,.2,.4);
+mesh(boxGeo,mats.white,body,0,1.27,-.205,.07,.48,.025);mesh(boxGeo,mats.gold,body,-.22,1.25,-.22,.12,.15,.03);mesh(boxGeo,mats.gold,body,.22,1.25,-.22,.12,.15,.03);
+mesh(sphereGeo,mats.skin,body,0,1.9,0,.29,.32,.28);
+// cap brim and crown
+mesh(boxGeo,mats.navy,body,0,2.15,0,.42,.12,.4);mesh(boxGeo,mats.blue,body,0,2.23,.02,.32,.13,.3);mesh(boxGeo,mats.gold,body,0,2.17,-.207,.12,.07,.025);
+// belt
+mesh(boxGeo,mats.black,body,0,.91,0,.72,.13,.42);mesh(boxGeo,mats.gold,body,0,.91,-.22,.13,.12,.035);
+const arms=[],legs=[];
+for(let s of [-1,1]){
+ const arm=new THREE.Group();arm.position.set(s*.43,1.52,0);body.add(arm);mesh(boxGeo,mats.blue,arm,s*.04,-.28,0,.22,.55,.24);mesh(sphereGeo,mats.skin,arm,s*.04,-.58,-.015,.13,.13,.13);arms.push(arm);
+ const leg=new THREE.Group();leg.position.set(s*.2,.78,0);body.add(leg);mesh(boxGeo,mats.navy,leg,0,-.28,0,.25,.58,.29);mesh(boxGeo,mats.black,leg,0,-.58,-.09,.29,.16,.45);legs.push(leg);
+}
+// police badge shield on chest
+const badge=mesh(new THREE.CircleGeometry(.105,6),mats.gold,body,.18,1.42,-.225);badge.rotation.z=Math.PI/6;
+// Objects are recycled forward, with real train/blocker meshes
+const obstacles=[],coins=[],decor=[];let running=false,paused=false,gameOver=false,lane=0,playerX=0,jumpY=0,jumpV=0,slideT=0,speed=17,distance=0,coinCount=0,best=Number(localStorage.getItem('nevpadiBest')||0),spawnClock=0,coinClock=0,lastTime=0,toastT=0;
+$('best').textContent=best;
+function makeTrain(lane,z){const g=new THREE.Group();const x=lane*2.65;g.position.set(x,0,z);scene.add(g);mesh(boxGeo,mats.blue,g,0,1.5,0,2.05,2.8,8.2);mesh(boxGeo,mats.white,g,0,2.4,-.1,2.08,.18,7.9);mesh(boxGeo,mats.glass,g,0,1.95,-4.13,1.65,.72,.08);for(let i=0;i<4;i++){mesh(boxGeo,mats.glass,g,-.55+i*.37,1.85,-4.19,.25,.38,.04);}mesh(boxGeo,mats.red,g,0,.38,-4.18,.32,.22,.06);for(let i=0;i<6;i++)mesh(cylGeo,mats.black,g,i%2?-.72:.72,.27, -3+i*1.15,.23,.22,.23);return {group:g,type:'train',lane,z,depth:7.8,hitY:2.8,passed:false};}
+function makeBarrier(lane,z){const g=new THREE.Group();g.position.set(lane*2.65,0,z);scene.add(g);mesh(boxGeo,mats.red,g,0,.72,0,1.65,.95,.32);for(let i=-1;i<=1;i++)mesh(boxGeo,mats.white,g,i*.48,.72,-.18,.22,.9,.035).rotation.z=-.45;for(let x of [-.65,.65])mesh(boxGeo,mats.black,g,x,.23,0,.12,.45,.15);return {group:g,type:'barrier',lane,z,depth:.6,hitY:.95,passed:false};}
+function makeGate(lane,z){const g=new THREE.Group();g.position.set(lane*2.65,0,z);scene.add(g);mesh(boxGeo,mats.black,g,0,1.75,0,1.85,.18,.2);for(let x of [-.8,.8])mesh(boxGeo,mats.yellow,g,x,1.05,0,.16,2.1,.22);mesh(boxGeo,mats.yellow,g,0,1.75,.01,1.6,.08,.24);return {group:g,type:'gate',lane,z,depth:.6,hitY:1.8,passed:false};}
+function makeCoin(lane,z){const g=new THREE.Group();g.position.set(lane*2.65,1.15,z);scene.add(g);mesh(new THREE.TorusGeometry(.32,.105,8,18),mats.gold,g,0,0,0,1,1,1);mesh(new THREE.CylinderGeometry(.22,.22,.07,18),mats.gold,g,0,0,0,1,1,1).rotation.x=Math.PI/2;coins.push({group:g,lane,z,taken:false});}
+function spawn(){const lane=Math.floor(Math.random()*3)-1;const r=Math.random();if(r<.43)obstacles.push(makeTrain(lane,-115));else if(r<.78)obstacles.push(makeBarrier(lane,-115));else obstacles.push(makeGate(lane,-115));if(Math.random()<.92){const coinLane=Math.floor(Math.random()*3)-1;for(let i=0;i<5;i++)makeCoin(coinLane,-107-i*2.1);} }
+function showToast(text){$('toast').textContent=text;$('toast').style.opacity=1;toastT=1.25;}
+function startGame(){for(const o of obstacles)scene.remove(o.group);for(const c of coins)scene.remove(c.group);obstacles.length=0;coins.length=0;lane=0;playerX=0;jumpY=0;jumpV=0;slideT=0;speed=17;distance=0;coinCount=0;spawnClock=.5;coinClock=0;gameOver=false;paused=false;running=true;$('overlay').classList.add('hidden');$('controls').classList.remove('hidden');$('pause').classList.remove('hidden');$('hint').textContent='СВАЙП ← → · СТРИБОК ↑ · КОВЗАННЯ ↓';showToast('ПОЇХАЛИ!');lastTime=performance.now();}
+function endGame(){running=false;gameOver=true;$('controls').classList.add('hidden');$('pause').classList.add('hidden');$('overlay').classList.remove('hidden');$('panel').innerHTML=`<h1>ЗАБІГ ЗАВЕРШЕНО</h1><p>Дистанція: <b>${Math.floor(distance)} м</b><br>Монети: <b>${coinCount}</b></p><p>${distance>best?'Новий рекорд! Так тримати, офіцере.':'Спробуй ще раз і побий свій рекорд.'}</p><button id="start" class="btn">↻ ЩЕ РАЗ</button><button id="home" class="btn secondary">У меню</button>`;if(Math.floor(distance)>best){best=Math.floor(distance);localStorage.setItem('nevpadiBest',best);$('best').textContent=best;} $('start').onclick=startGame;$('home').onclick=showMenu;}
+function showMenu(){running=false;paused=false;$('overlay').classList.remove('hidden');$('controls').classList.add('hidden');$('pause').classList.add('hidden');$('panel').innerHTML='<h1>НЕ ВПАДИ 3D</h1><p>Ти — поліцейський на шаленому забігу крізь залізничну станцію. Ухиляйся від поїздів і бар’єрів, стрибай, ковзай та збирай монети.</p><div class="tips"><div class="tip">↔️ <b>Вліво / вправо</b><br>змінити колію</div><div class="tip">⬆️ <b>Свайп угору</b><br>стрибок</div><div class="tip">⬇️ <b>Свайп униз</b><br>ковзання</div><div class="tip">🚆 <b>Увага!</b><br>поїзди попереду</div></div><button id="start" class="btn">▶ ПОЧАТИ ЗАБІГ</button><button id="how" class="btn secondary">Як грати</button><p class="small">Працює на iPhone та комп’ютері. Для 3D-графіки потрібен інтернет.</p>'; $('start').onclick=startGame;$('how').onclick=()=>showToast('Уникай перешкод свайпами!');}
+$('start').onclick=startGame;$('how').onclick=()=>showToast('Свайпни вліво/вправо, вгору для стрибка, вниз для ковзання.');
+function moveLeft(){if(running&&!paused)lane=Math.max(-1,lane-1)}function moveRight(){if(running&&!paused)lane=Math.min(1,lane+1)}function jump(){if(running&&!paused&&jumpY<.03&&slideT<=0){jumpV=8.7}}function slide(){if(running&&!paused&&jumpY<.25)slideT=.72}
+$('left').onclick=moveLeft;$('right').onclick=moveRight;$('jump').onclick=jump;$('slide').onclick=slide;
+$('pause').onclick=()=>{if(!running)return;paused=!paused;$('pause').textContent=paused?'▶':'Ⅱ';if(paused)showToast('ПАУЗА');};
+let startX=0,startY=0;renderer.domElement.addEventListener('touchstart',e=>{const t=e.changedTouches[0];startX=t.clientX;startY=t.clientY;},{passive:true});renderer.domElement.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-startX,dy=t.clientY-startY;if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;if(Math.abs(dx)>Math.abs(dy)){dx<0?moveLeft():moveRight()}else{dy<0?jump():slide()}},{passive:true});
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')moveLeft();if(e.key==='ArrowRight'||e.key==='d')moveRight();if(e.key==='ArrowUp'||e.key==='w'||e.key===' ')jump();if(e.key==='ArrowDown'||e.key==='s')slide();if(e.key==='Escape'||e.key==='p')$('pause').click();});
+const clock=new THREE.Clock();
+function animate(now){requestAnimationFrame(animate);let dt=Math.min(clock.getDelta(),.04);if(running&&!paused){distance+=speed*dt*.75;speed=Math.min(29,17+distance*.018);spawnClock-=dt;if(spawnClock<=0){spawn();spawnClock=Math.max(.62,1.15-(speed-17)*.025)+Math.random()*.35;}playerX=THREE.MathUtils.damp(playerX,lane*2.65,13,dt);player.position.x=playerX;
+ if(jumpV!==0||jumpY>0){jumpY+=jumpV*dt;jumpV-=22*dt;if(jumpY<=0){jumpY=0;jumpV=0;}}if(slideT>0)slideT-=dt;
+ player.position.y=jumpY;body.scale.y=slideT>0?.58:1;body.position.y=slideT>0?-.34:0;const runT=now*.012;for(let i=0;i<2;i++){legs[i].rotation.x=Math.sin(runT+i*Math.PI)*.72;arms[i].rotation.x=Math.sin(runT+i*Math.PI+Math.PI)*.58;}player.rotation.z=THREE.MathUtils.damp(player.rotation.z,(lane*-.035),6,dt);
+ camera.position.x=THREE.MathUtils.damp(camera.position.x,playerX*.42,3,dt);camera.position.y=THREE.MathUtils.damp(camera.position.y,4.15+jumpY*.15,3,dt);camera.lookAt(playerX*.15,1.15,-8);
+ for(let i=obstacles.length-1;i>=0;i--){const o=obstacles[i];o.z+=speed*dt;o.group.position.z=o.z;if(o.type==='train')o.group.position.y=Math.sin(now*.001+o.lane)*.015;if(!o.passed&&o.z>1.9){o.passed=true;if(o.lane===lane){let safe=false;if(o.type==='barrier')safe=jumpY>.85;if(o.type==='gate')safe=slideT>0;if(!safe){showToast('ЗІТКНЕННЯ!');endGame();break;}}}if(o.z>14){scene.remove(o.group);obstacles.splice(i,1);}}
+ for(let i=coins.length-1;i>=0;i--){const c=coins[i];c.z+=speed*dt;c.group.position.z=c.z;c.group.rotation.y+=dt*2.8;c.group.rotation.z=Math.sin(now*.004+i)*.12;if(!c.taken&&Math.abs(c.z-3)<1.3&&c.lane===lane&&Math.abs(jumpY-0.15)<1.6){c.taken=true;coinCount++;$('coins').textContent=coinCount;scene.remove(c.group);coins.splice(i,1);continue;}if(c.z>12){scene.remove(c.group);coins.splice(i,1);}}
+ $('distance').textContent=Math.floor(distance);$('progress').style.width=(Math.min(100,distance/500*100))+'%';if(toastT>0){toastT-=dt;if(toastT<=0)$('toast').style.opacity=0;}
+ }
+ renderer.render(scene,camera);
+}
+requestAnimationFrame(animate);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));});
+</script>
+</body></html>
