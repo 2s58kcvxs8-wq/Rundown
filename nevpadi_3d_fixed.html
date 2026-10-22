@@ -3,57 +3,126 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#0b1622">
-<title>Не впади — Endless 3D Run</title>
+<meta name="theme-color" content="#07111f">
+<title>НЕ ВПАДИ 3D</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#87CEEB;font-family:system-ui,-apple-system,sans-serif;touch-action:none;color:#fff}canvas{display:block}
-#hud{position:fixed;inset:0;pointer-events:none;z-index:5;display:flex;justify-content:space-between;padding:20px;padding-top:max(20px,env(safe-area-inset-top))}
-.panel{background:rgba(10,22,32,.85);border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:8px 14px;text-align:center;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,.3)}.panel .lbl{font-size:10px;letter-spacing:.1em;opacity:.7;font-weight:700;margin-bottom:2px}.panel .val{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}
-.stats-left{display:flex;flex-direction:column;gap:8px}.stats-right{display:flex;flex-direction:column;gap:8px;text-align:right}
-#startScreen,#gameOverScreen{position:fixed;inset:0;z-index:10;background:rgba(8,19,31,.9);display:flex;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(5px);transition:opacity .4s}#gameOverScreen{opacity:0;pointer-events:none}#gameOverScreen.show{opacity:1;pointer-events:auto}
-.modal{max-width:360px;width:100%;background:#0e1e2c;border:1px solid rgba(255,255,255,.1);border-radius:26px;padding:30px 24px;text-align:center;box-shadow:0 30px 90px rgba(0,0,0,.6)}.modal h1{font-size:32px;margin:0 0 8px;font-weight:900;letter-spacing:.05em}.modal p{font-size:14px;color:#c8d6e0;margin-bottom:20px;line-height:1.5}.score-big{font-size:48px;font-weight:900;color:#f7c948;margin:10px 0 20px}
-button{background:linear-gradient(160deg,#2bd680,#128a52);color:#04140c;border:0;border-radius:16px;padding:16px 24px;font-size:16px;font-weight:900;width:100%;letter-spacing:.06em;cursor:pointer;box-shadow:0 8px 26px rgba(43,214,128,.3)}button:active{transform:scale(.97)}
-.instructions{display:flex;justify-content:space-around;margin-top:20px;font-size:11px;color:#8fa3b5}.instructions span{display:block;font-size:20px;margin-bottom:4px}
+:root{--cyan:#54f5ff;--gold:#ffd34d;--panel:rgba(4,12,27,.78)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07111f;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;touch-action:none}
+#game{position:fixed;inset:0}
+canvas{display:block;width:100%;height:100%}
+#hud{position:fixed;top:env(safe-area-inset-top,12px);left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;text-shadow:0 2px 8px #000}
+.pill{background:rgba(3,10,23,.55);border:1px solid rgba(255,255,255,.16);border-radius:15px;padding:8px 11px;font-size:14px;font-weight:750;backdrop-filter:blur(8px)}
+#rightHud{display:flex;gap:6px}
+#overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(180deg,rgba(3,8,22,.14),rgba(3,8,22,.75));}
+.card{width:min(440px,100%);text-align:center;padding:25px 20px;border:1px solid rgba(255,255,255,.18);border-radius:27px;background:rgba(5,14,31,.84);box-shadow:0 20px 80px #0008;backdrop-filter:blur(15px)}
+h1{font-size:clamp(32px,9vw,48px);line-height:1;margin:0 0 8px;letter-spacing:-1.5px;color:var(--cyan);text-shadow:0 0 28px #36eaff66}
+.sub{color:#c4d5e9;font-size:14px;line-height:1.5;margin:10px 0 18px}
+button,select{font:inherit;color:white;background:#102843;border:1px solid #37617e;border-radius:14px;padding:12px 14px;font-weight:750}
+button:active{transform:scale(.97)}
+.primary{width:100%;border:0;background:linear-gradient(100deg,#00cde8,#4d8cff);color:#001423;font-size:18px;padding:14px;margin-top:8px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.options button.selected{border-color:var(--gold);box-shadow:0 0 0 2px #ffd34d44}
+#touchControls{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);left:0;right:0;display:none;justify-content:space-between;align-items:end;padding:0 18px;pointer-events:none}
+.pad{display:flex;gap:10px;pointer-events:auto}
+.ctrl{width:62px;height:62px;border-radius:50%;background:rgba(4,15,32,.55);border:1px solid #c6f8ff88;font-size:27px;backdrop-filter:blur(8px);box-shadow:0 5px 20px #0005}
+#jump{width:76px;height:76px;background:rgba(0,207,236,.24);border-color:#54f5ff}
+#soundBtn{pointer-events:auto;position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 110px);border-radius:50%;width:44px;height:44px;padding:0;background:#07182bb8}
+.small{font-size:12px;color:#91a8c2}
+#toast{position:fixed;top:24%;left:0;right:0;text-align:center;font-size:24px;font-weight:900;color:var(--gold);text-shadow:0 2px 10px #000;pointer-events:none;opacity:0;transition:opacity .2s}
+@media (pointer:coarse){#touchControls{display:flex}}
 </style>
 </head>
 <body>
-<div id="hud"><div class="stats-left"><div class="panel"><div class="lbl">РАХУНОК</div><div class="val" id="scoreDisplay">0</div></div></div><div class="stats-right"><div class="panel"><div class="lbl">РЕКОРД</div><div class="val" id="highScoreDisplay">0</div></div><div class="panel"><div class="lbl">КРИСТАЛИ</div><div class="val" id="crystalsDisplay">0</div></div></div></div>
-<div id="startScreen"><div class="modal"><h1>НЕ ВПАДИ</h1><div style="color:#54e6a2;font-weight:800;letter-spacing:.15em;font-size:12px;margin-bottom:15px">ENDLESS 3D RUN</div><p>Котись вперед, збирай кристали та ухиляйся від перешкод. Швидкість зростатиме!</p><button id="playBtn">ГРИ ▶</button><div class="instructions"><div><span>←</span> Вліво</div><div><span>→</span> Вправо</div><div><span>☝️</span> Свайп / Тап</div></div></div></div>
-<div id="gameOverScreen"><div class="modal"><h1 style="color:#ff5a5a">ГРА ЗАКІНЧЕНА</h1><p>Ти зіткнувся з перешкодою</p><div class="score-big" id="finalScore">0</div><button id="restartBtn">СПРОБУВАТИ ЩЕ</button></div></div>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
-<script type="module">
-import * as THREE from 'three';
-const CONFIG={laneWidth:2.5,startSpeed:15,maxSpeed:35,accel:.5,ballRadius:.45,spawnDistance:120,cleanupDistance:10};
-let score=0,crystals=0,highScore=0;try{highScore=Number(localStorage.getItem('ndHighScore')||0)}catch(e){}
-let gameSpeed=CONFIG.startSpeed,isPlaying=false,currentLane=1,targetX=0,ballX=0,obstacles=[],crystalItems=[],nextSpawnZ=-25;
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x87CEEB);scene.fog=new THREE.Fog(0x87CEEB,30,120);
-const camera=new THREE.PerspectiveCamera(65,innerWidth/innerHeight,.1,250);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;document.body.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xffffff,0x52614c,1.35));
-const sun=new THREE.DirectionalLight(0xfff0dc,2);sun.position.set(-10,22,12);sun.castShadow=true;sun.shadow.camera.top=22;sun.shadow.camera.bottom=-22;sun.shadow.camera.left=-22;sun.shadow.camera.right=22;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
-function createRoadTexture(){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle='#918d83';x.fillRect(0,0,256,256);for(let r=0;r<8;r++){for(let col=0;col<4;col++){const xx=col*64-(r%2?16:0),yy=r*32,s=125+Math.floor(Math.random()*40);x.fillStyle=`rgb(${s},${s-3},${s-10})`;x.fillRect(xx+2,yy+2,60,28);x.strokeStyle='rgba(45,43,40,.65)';x.lineWidth=2;x.strokeRect(xx+2,yy+2,60,28)}}for(let i=0;i<700;i++){let s=Math.random()>.5?255:20;x.fillStyle=`rgba(${s},${s},${s},.045)`;x.fillRect(Math.random()*256,Math.random()*256,3,3)}const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2,24);t.anisotropy=4;return t}
-const roadMat=new THREE.MeshStandardMaterial({map:createRoadTexture(),roughness:.95});const road=new THREE.Mesh(new THREE.PlaneGeometry(15,240),roadMat);road.rotation.x=-Math.PI/2;road.position.z=-80;road.receiveShadow=true;scene.add(road);
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(500,500),new THREE.MeshStandardMaterial({color:0x5e9b4e,roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.08;ground.position.z=-100;scene.add(ground);
-const shoulderMat=new THREE.MeshStandardMaterial({color:0xd9c49b,roughness:1});for(const side of [-1,1]){const sh=new THREE.Mesh(new THREE.BoxGeometry(2.4,.12,240),shoulderMat);sh.position.set(side*8.7,-.02,-80);sh.receiveShadow=true;scene.add(sh);const wall=new THREE.Mesh(new THREE.BoxGeometry(.25,.45,240),new THREE.MeshStandardMaterial({color:0xc8bda7,roughness:.85}));wall.position.set(side*7.55,.22,-80);wall.castShadow=wall.receiveShadow=true;scene.add(wall)}
-function makePalm(){const g=new THREE.Group(),trunkMat=new THREE.MeshStandardMaterial({color:0x93683f,roughness:1}),leafMat=new THREE.MeshStandardMaterial({color:0x247a36,roughness:.85,side:THREE.DoubleSide});const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.18,.32,4.2,8),trunkMat);trunk.position.y=2.1;trunk.rotation.z=(Math.random()-.5)*.12;trunk.castShadow=true;g.add(trunk);for(let i=0;i<7;i++){const a=i*Math.PI*2/7,leaf=new THREE.Mesh(new THREE.ConeGeometry(.32,2.7,5),leafMat);leaf.position.set(Math.cos(a)*.85,4.05-Math.abs(Math.cos(a))*.25,Math.sin(a)*.85);leaf.rotation.z=-Math.cos(a)*.7;leaf.rotation.x=Math.sin(a)*.7;leaf.rotation.y=a;leaf.castShadow=true;g.add(leaf)}return g}
-function makeBush(){const g=new THREE.Group(),mat=new THREE.MeshStandardMaterial({color:[0x2d7837,0x3e8b3b,0x558e42][Math.floor(Math.random()*3)],roughness:1});for(let i=0;i<4;i++){const m=new THREE.Mesh(new THREE.IcosahedronGeometry(.45+Math.random()*.25,1),mat);m.position.set((Math.random()-.5)*.7,.3+Math.random()*.25,(Math.random()-.5)*.7);m.castShadow=true;g.add(m)}return g}
-function makeHouse(){const g=new THREE.Group(),colors=[0xf0d7a6,0xe5c6a0,0xcbd9c0,0xe9e0cf,0xf0c8ae],bodyMat=new THREE.MeshStandardMaterial({color:colors[Math.floor(Math.random()*colors.length)],roughness:.95}),roofMat=new THREE.MeshStandardMaterial({color:[0x914b35,0x70443a,0x9c5a40][Math.floor(Math.random()*3)],roughness:1});const body=new THREE.Mesh(new THREE.BoxGeometry(3.6,2.5,3.2),bodyMat);body.position.y=1.35;body.castShadow=body.receiveShadow=true;g.add(body);const roof=new THREE.Mesh(new THREE.ConeGeometry(2.8,1.55,4),roofMat);roof.rotation.y=Math.PI/4;roof.position.y=3.2;roof.castShadow=true;g.add(roof);const door=new THREE.Mesh(new THREE.BoxGeometry(.65,1.35,.08),new THREE.MeshStandardMaterial({color:0x68462f}));door.position.set(0,.72,1.65);g.add(door);const wm=new THREE.MeshStandardMaterial({color:0x7bc5d8,roughness:.3});for(const x of [-1.05,1.05]){const win=new THREE.Mesh(new THREE.BoxGeometry(.65,.65,.08),wm);win.position.set(x,1.65,1.65);g.add(win);const sm=new THREE.MeshStandardMaterial({color:0x387b56});for(const sx of [-.43,.43]){const sh=new THREE.Mesh(new THREE.BoxGeometry(.16,.75,.09),sm);sh.position.set(x+sx,1.65,1.7);g.add(sh)}}return g}
-const scenery=[];for(let i=0;i<36;i++){const z=10-i*8;for(const side of [-1,1]){const x=side*(10+Math.random()*8),r=Math.random();let obj=r<.38?makePalm():r<.72?makeBush():makeHouse();obj.position.set(x,0,z+Math.random()*3);obj.rotation.y=side<0?Math.random()*.3:Math.PI+Math.random()*.3;scene.add(obj);scenery.push(obj)}}
-const ballGroup=new THREE.Group(),ballGeo=new THREE.SphereGeometry(CONFIG.ballRadius,32,32),ballMat=new THREE.MeshStandardMaterial({color:0x3bc2c9,roughness:.2,metalness:.1}),ballMesh=new THREE.Mesh(ballGeo,ballMat);ballMesh.castShadow=ballMesh.receiveShadow=true;ballGroup.add(ballMesh);const stripe=new THREE.Mesh(new THREE.TorusGeometry(CONFIG.ballRadius+.01,.05,12,32),new THREE.MeshStandardMaterial({color:0xffffff,roughness:.4}));stripe.rotation.x=Math.PI/2;ballGroup.add(stripe);ballGroup.position.set(0,CONFIG.ballRadius,0);scene.add(ballGroup);camera.position.set(0,5,10);camera.lookAt(0,1,-10);
-const crateMat=new THREE.MeshStandardMaterial({color:0xc28b56,roughness:.9}),coneMat=new THREE.MeshStandardMaterial({color:0xe87c2c,roughness:.7}),crystalMat=new THREE.MeshStandardMaterial({color:0x00f0ff,emissive:0x0088aa,roughness:.1,metalness:.6});
-function spawnRow(z){const free=Math.floor(Math.random()*3);if(Math.random()<.75){const c=new THREE.Mesh(new THREE.OctahedronGeometry(.4),crystalMat);c.position.set((free-1)*CONFIG.laneWidth,.85,z);c.castShadow=true;scene.add(c);crystalItems.push(c)}for(let lane=0;lane<3;lane++){if(lane===free||Math.random()>=.55)continue;const o=Math.random()>.5?new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2),crateMat):new THREE.Mesh(new THREE.ConeGeometry(.55,1.25,16),coneMat);o.position.set((lane-1)*CONFIG.laneWidth,.62,z-Math.random()*3);o.castShadow=o.receiveShadow=true;scene.add(o);obstacles.push(o)}}
-function clearDynamic(){for(const o of obstacles)scene.remove(o);for(const c of crystalItems)scene.remove(c);obstacles=[];crystalItems=[]}
-function updateHUD(){document.getElementById('scoreDisplay').textContent=Math.floor(score);document.getElementById('highScoreDisplay').textContent=Math.floor(highScore);document.getElementById('crystalsDisplay').textContent=crystals}
-function gameOver(){if(!isPlaying)return;isPlaying=false;document.getElementById('finalScore').textContent=Math.floor(score);document.getElementById('gameOverScreen').classList.add('show')}
-function moveLeft(){if(currentLane>0){currentLane--;targetX=(currentLane-1)*CONFIG.laneWidth}}function moveRight(){if(currentLane<2){currentLane++;targetX=(currentLane-1)*CONFIG.laneWidth}}
-const clock=new THREE.Clock();
-function startGame(){clearDynamic();score=0;crystals=0;gameSpeed=CONFIG.startSpeed;currentLane=1;targetX=ballX=0;ballGroup.position.set(0,CONFIG.ballRadius,0);ballMesh.rotation.set(0,0,0);nextSpawnZ=-25;for(let i=0;i<9;i++){spawnRow(nextSpawnZ);nextSpawnZ-=22+Math.random()*4}updateHUD();document.getElementById('startScreen').style.display='none';document.getElementById('gameOverScreen').classList.remove('show');isPlaying=true;clock.getDelta()}
-function updateGame(){const dt=Math.min(clock.getDelta(),.05);if(!isPlaying)return;const dist=gameSpeed*dt;gameSpeed=Math.min(gameSpeed+CONFIG.accel*dt,CONFIG.maxSpeed);roadMat.map.offset.y-=dist*.025;for(let i=obstacles.length-1;i>=0;i--){const o=obstacles[i];o.position.z+=dist;if(!o.userData.hit&&Math.abs(o.position.z)<.95&&Math.abs(o.position.x-ballGroup.position.x)<.92){o.userData.hit=true;gameOver();return}if(o.position.z>CONFIG.cleanupDistance){scene.remove(o);obstacles.splice(i,1)}}for(let i=crystalItems.length-1;i>=0;i--){const c=crystalItems[i];c.position.z+=dist;c.rotation.y+=dt*3;c.rotation.x+=dt*1.5;if(Math.abs(c.position.z)<1.1&&Math.abs(c.position.x-ballGroup.position.x)<1){scene.remove(c);crystalItems.splice(i,1);crystals++;score+=10;continue}if(c.position.z>CONFIG.cleanupDistance){scene.remove(c);crystalItems.splice(i,1)}}nextSpawnZ+=dist;if(nextSpawnZ>-CONFIG.spawnDistance){spawnRow(nextSpawnZ-20);nextSpawnZ-=20+Math.random()*6}ballX=THREE.MathUtils.lerp(ballX,targetX,Math.min(1,10*dt));ballGroup.position.x=ballX;ballMesh.rotation.x-=dist/CONFIG.ballRadius;ballGroup.position.y=CONFIG.ballRadius+Math.sin(performance.now()*.01)*.04;for(const s of scenery){s.position.z+=dist;if(s.position.z>18)s.position.z-=288}camera.position.x=THREE.MathUtils.lerp(camera.position.x,ballGroup.position.x,Math.min(1,5*dt));camera.lookAt(ballGroup.position.x,ballGroup.position.y+1,-10);score+=gameSpeed*dt*.1;if(score>highScore){highScore=score;try{localStorage.setItem('ndHighScore',String(Math.floor(highScore)))}catch(e){}}updateHUD()}
-addEventListener('keydown',e=>{if(!isPlaying)return;if(['ArrowLeft','a','A'].includes(e.key))moveLeft();if(['ArrowRight','d','D'].includes(e.key))moveRight()});
-let tx=0,ty=0;addEventListener('touchstart',e=>{if(!isPlaying)return;tx=e.changedTouches[0].screenX;ty=e.changedTouches[0].screenY},{passive:true});addEventListener('touchend',e=>{if(!isPlaying)return;const dx=e.changedTouches[0].screenX-tx,dy=e.changedTouches[0].screenY-ty;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy)){dx>0?moveRight():moveLeft()}else if(Math.abs(dx)<30&&Math.abs(dy)<30){e.changedTouches[0].screenX>innerWidth/2?moveRight():moveLeft()}},{passive:true});
-document.getElementById('playBtn').addEventListener('click',startGame);document.getElementById('restartBtn').addEventListener('click',startGame);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5))});
-function animate(){requestAnimationFrame(animate);updateGame();renderer.render(scene,camera)}updateHUD();animate();
+<div id="game"></div>
+<div id="hud">
+ <div class="pill">🏁 <span id="score">0</span> м</div>
+ <div id="rightHud"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">⭐ <span id="best">0</span></div></div>
+</div>
+<button id="soundBtn" aria-label="Увімкнути або вимкнути звук">🔊</button>
+<div id="toast"></div>
+<div id="touchControls">
+ <div class="pad"><button class="ctrl" id="left" aria-label="Ліворуч">◀</button><button class="ctrl" id="right" aria-label="Праворуч">▶</button></div>
+ <button class="ctrl" id="jump" aria-label="Стрибок">⬆</button>
+</div>
+<div id="overlay">
+ <div class="card">
+  <h1>НЕ ВПАДИ 3D</h1>
+  <div class="sub" id="intro">Біжи, ухиляйся від перешкод, збирай монети та бонуси. Не дай собі впасти!</div>
+  <div class="small">ОБЕРИ ПЕРСОНАЖА</div>
+  <div class="options" id="skins">
+   <button data-skin="cyan" class="selected">🔹 Неон</button><button data-skin="gold">🟡 Золотий</button><button data-skin="pink">🩷 Рожевий</button><button data-skin="lime">🟢 Лайм</button>
+  </div>
+  <label class="small" for="difficulty">РІВЕНЬ СКЛАДНОСТІ</label><br>
+  <select id="difficulty" style="width:100%;margin-top:7px">
+   <option value="easy">Легкий</option><option value="normal" selected>Звичайний</option><option value="hard">Складний</option>
+  </select>
+  <button id="start" class="primary">▶ ГРАТИ</button>
+  <div class="sub" style="margin-bottom:0">Керування: кнопки на екрані або свайпи. Працює на iPhone та комп'ютері.</div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=> {
+const $=id=>document.getElementById(id);
+if(!window.THREE){$('intro').textContent='Не вдалося завантажити 3D-бібліотеку. Перевір інтернет і перезавантаж сторінку.';$('start').disabled=true;return;}
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x87d7f4); scene.fog=new THREE.Fog(0x87d7f4,24,105);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.4,9.8);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;$('game').appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe8faff,0x3c5471,2.1));
+const sun=new THREE.DirectionalLight(0xfff1c7,3.0);sun.position.set(-4,10,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+const mat=(color,rough=.7,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
+const mats={road:mat(0x263c54),line:mat(0xe9f8ff,.35),grass:mat(0x39a875),white:mat(0xf2f5ff),dark:mat(0x17263b),red:mat(0xff4c5b,.35),gold:mat(0xffca3a,.25,.3),coin:mat(0xffd44a,.22,.65),purple:mat(0x9c67ff,.3,.2),boost:mat(0x36f3d0,.25,.25)};
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),mats.grass);floor.rotation.x=-Math.PI/2;floor.position.y=-.13;floor.position.z=-65;floor.receiveShadow=true;scene.add(floor);
+const road=new THREE.Mesh(new THREE.PlaneGeometry(7.8,190),mats.road);road.rotation.x=-Math.PI/2;road.position.set(0,-.08,-67);road.receiveShadow=true;scene.add(road);
+for(let x of [-1.3,1.3]){const stripe=new THREE.Mesh(new THREE.PlaneGeometry(.07,190),mats.line);stripe.rotation.x=-Math.PI/2;stripe.position.set(x,-.065,-67);scene.add(stripe);}
+for(let x of [-3.93,3.93]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,190),mats.boost);edge.position.set(x,-.02,-67);scene.add(edge);}
+const lanes=[-2.25,0,2.25];let lane=1,playing=false,score=0,coins=0,best=Number(localStorage.getItem('nv3d_best')||0),speed=13,elapsed=0,spawnTimer=0,coinTimer=0,boostTimer=0,shieldTimer=0,selectedSkin='cyan',soundOn=true,audioCtx=null;
+$('best').textContent=best;
+const skinColors={cyan:0x35eaff,gold:0xffd34d,pink:0xff62b6,lime:0x9dff58};
+const player=new THREE.Group();scene.add(player);player.position.set(0,.55,3);
+const ball=new THREE.Mesh(new THREE.SphereGeometry(.48,32,24),mat(skinColors[selectedSkin],.25,.25));ball.castShadow=true;player.add(ball);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(.51,.045,10,40),mats.white);ring.rotation.x=Math.PI/2;ring.position.y=-.12;player.add(ring);
+const eyeMat=mat(0x081626,.3);for(let x of [-.15,.15]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.055,12,10),eyeMat);eye.position.set(x,.1,.42);player.add(eye);}
+const obstacles=[],collectibles=[],decor=[];
+function box(w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
+function addObstacle(){let ln=Math.floor(Math.random()*3),type=Math.random();let mesh;
+ if(type<.48){mesh=box(1.15,.9,.9,mats.red,lanes[ln],.45,-62);mesh.userData.kind='block';}
+ else if(type<.78){mesh=box(1.35,.42,.75,mats.gold,lanes[ln],1.35,-62);mesh.userData.kind='bar';}
+ else {mesh=new THREE.Mesh(new THREE.ConeGeometry(.58,1.2,5),mats.purple);mesh.position.set(lanes[ln],.6,-62);mesh.castShadow=true;scene.add(mesh);mesh.userData.kind='spike';}
+ mesh.userData.lane=ln;obstacles.push(mesh);
+}
+function addCoinLine(){let ln=Math.floor(Math.random()*3),count=4+Math.floor(Math.random()*3);for(let i=0;i<count;i++){const m=new THREE.Mesh(new THREE.TorusGeometry(.25,.085,10,22),mats.coin);m.position.set(lanes[ln],.95,-58-i*1.35);m.rotation.y=Math.PI/2;m.castShadow=true;m.userData={lane:ln,kind:'coin'};scene.add(m);collectibles.push(m);}}
+function addBonus(){let ln=Math.floor(Math.random()*3),isShield=Math.random()<.5;const m=new THREE.Mesh(new THREE.OctahedronGeometry(.38),isShield?mats.boost:mats.purple);m.position.set(lanes[ln],1,-62);m.userData={lane:ln,kind:isShield?'shield':'magnet'};scene.add(m);collectibles.push(m);}
+function addDecor(){for(let side of [-1,1]){let z=-75-Math.random()*22;let trunk=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,1.8,7),mat(0x76503a));trunk.position.set(side*(5.4+Math.random()*2),.9,z);trunk.castShadow=true;scene.add(trunk);let crown=new THREE.Mesh(new THREE.SphereGeometry(.8,8,7),mat(Math.random()<.5?0x1f986a:0x2dbb78));crown.scale.set(1.25,.7,1);crown.position.set(trunk.position.x,2,z);scene.add(crown);decor.push({trunk,crown});}}
+for(let i=0;i<16;i++)addDecor();
+function tone(freq,dur=.08,type='sine',vol=.035){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur);}catch(e){}}
+function music(){if(!soundOn)return; tone(220,.12,'triangle',.009);}
+function toast(t){$('toast').textContent=t;$('toast').style.opacity=1;setTimeout(()=>$('toast').style.opacity=0,850);}
+function updateHud(){$('score').textContent=Math.floor(score);$('coins').textContent=coins;$('best').textContent=best;}
+function start(){score=0;coins=0;elapsed=0;spawnTimer=.5;coinTimer=2;boostTimer=8;shieldTimer=0;lane=1;speed=Number($('difficulty').value==='easy'?10:$('difficulty').value==='hard'?17:13);player.position.set(0,.55,3);player.visible=true;for(const o of obstacles)scene.remove(o);obstacles.length=0;for(const c of collectibles)scene.remove(c);collectibles.length=0;playing=true;$('overlay').style.display='none';updateHud();tone(660,.16,'triangle');}
+function endGame(){playing=false;best=Math.max(best,Math.floor(score));localStorage.setItem('nv3d_best',best);updateHud();$('intro').innerHTML=`Твій результат: <b>${Math.floor(score)} м</b><br>Монет зібрано: <b>${coins}</b><br>Рекорд зберігається на цьому пристрої.`;$('start').textContent='↻ ЩЕ РАЗ';$('overlay').style.display='flex';tone(110,.35,'sawtooth',.05);}
+function move(d){if(!playing)return;lane=Math.max(0,Math.min(2,lane+d));tone(300,.045,'square',.012);}
+function jump(){if(!playing)return;if(player.position.y<.7){player.userData.vy=7.5;tone(500,.09,'triangle');}}
+function key(e){if(['ArrowLeft','a','A'].includes(e.key)){e.preventDefault();move(-1)}if(['ArrowRight','d','D'].includes(e.key)){e.preventDefault();move(1)}if(['ArrowUp',' ','w','W'].includes(e.key)){e.preventDefault();jump()}if(e.key==='Enter'&&!playing)start();}
+addEventListener('keydown',key);
+$('left').addEventListener('pointerdown',e=>{e.preventDefault();move(-1)});$('right').addEventListener('pointerdown',e=>{e.preventDefault();move(1)});$('jump').addEventListener('pointerdown',e=>{e.preventDefault();jump()});
+let tx=0,ty=0;renderer.domElement.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY;},{passive:true});renderer.domElement.addEventListener('touchend',e=>{if(!playing)return;let dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<-25)jump();},{passive:true});
+$('start').addEventListener('click',start);$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊':'🔇';if(soundOn){tone(660,.1);}});
+document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',()=>{selectedSkin=b.dataset.skin;ball.material.color.setHex(skinColors[selectedSkin]);document.querySelectorAll('[data-skin]').forEach(x=>x.classList.toggle('selected',x===b));tone(480,.06);}));
+function update(dt){if(!playing)return;elapsed+=dt;score+=dt*speed*.6;speed+=dt*.035;spawnTimer-=dt;coinTimer-=dt;boostTimer-=dt;if(spawnTimer<=0){addObstacle();spawnTimer=Math.max(.52,1.12-(speed-10)*.025)+Math.random()*.38;}if(coinTimer<=0){addCoinLine();coinTimer=3+Math.random()*2;}if(boostTimer<=0){addBonus();boostTimer=11+Math.random()*7;}
+ player.position.x+=(lanes[lane]-player.position.x)*Math.min(1,dt*12);player.rotation.z=(lanes[lane]-player.position.x)*-.12;
+ player.userData.vy=(player.userData.vy||0)-18*dt;player.position.y+=player.userData.vy*dt;if(player.position.y<.55){player.position.y=.55;player.userData.vy=0;}
+ ball.rotation.x+=dt*speed*.18;ring.rotation.z+=dt*1.4;
+ for(let i=obstacles.length-1;i>=0;i--){let o=obstacles[i];o.position.z+=speed*dt;if(o.position.z>5){scene.remove(o);obstacles.splice(i,1);continue;}let near=Math.abs(o.position.z-3)<.68&&Math.abs(player.position.x-o.position.x)<.82;if(near){if(shieldTimer>0){shieldTimer=0;scene.remove(o);obstacles.splice(i,1);toast('🛡️ ЩИТ врятував!');tone(800,.15);continue;}if(o.userData.kind==='bar'&&player.position.y>1.25)continue;if(player.position.y>1.25)continue;endGame();return;}}
+ for(let i=collectibles.length-1;i>=0;i--){let c=collectibles[i];c.position.z+=speed*dt;c.rotation.y+=dt*2.6;c.rotation.x+=dt;if(c.position.z>5){scene.remove(c);collectibles.splice(i,1);continue;}if(Math.abs(c.position.z-3)<.8&&Math.abs(player.position.x-c.position.x)<.85){if(c.userData.kind==='coin'){coins++;score+=8;tone(780,.07,'sine',.025);}else if(c.userData.kind==='shield'){shieldTimer=8;toast('🛡️ ЩИТ на 8 секунд');tone(620,.2);}else{speed=Math.max(9,speed-3);score+=25;toast('⚡ БОНУС!');tone(900,.18);}scene.remove(c);collectibles.splice(i,1);updateHud();}}
+ if(shieldTimer>0){shieldTimer-=dt;player.children[0].material.emissive.setHex(0x114455);}else player.children[0].material.emissive.setHex(0x000000);
+ for(const d of decor){d.trunk.position.z+=speed*dt*.78;d.crown.position.z=d.trunk.position.z;if(d.trunk.position.z>10){let z=-100-Math.random()*25;d.trunk.position.z=z;d.crown.position.z=z;}}
+ if(Math.floor(elapsed)%8===0&&Math.floor(elapsed)!==Math.floor(elapsed-dt)){music();}
+ updateHud();
+}
+let last=performance.now();function loop(now){requestAnimationFrame(loop);let dt=Math.min(.04,(now-last)/1000);last=now;update(dt);camera.position.x+=(player.position.x*.18-camera.position.x)*dt*2;camera.lookAt(player.position.x*.12,.9,-4);renderer.render(scene,camera);}requestAnimationFrame(loop);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));});
+})();
 </script>
-</body>
-</html>
+</body></html>
