@@ -3,128 +3,82 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#07111f">
+<meta name="theme-color" content="#071326">
 <title>НЕ ВПАДИ 3D</title>
 <style>
-:root{--cyan:#54f5ff;--gold:#ffd34d;--panel:rgba(4,12,27,.78)}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07111f;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif;touch-action:none}
-#game{position:fixed;inset:0}
-canvas{display:block;width:100%;height:100%}
-#hud{position:fixed;top:env(safe-area-inset-top,12px);left:0;right:0;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;pointer-events:none;text-shadow:0 2px 8px #000}
-.pill{background:rgba(3,10,23,.55);border:1px solid rgba(255,255,255,.16);border-radius:15px;padding:8px 11px;font-size:14px;font-weight:750;backdrop-filter:blur(8px)}
-#rightHud{display:flex;gap:6px}
-#overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(180deg,rgba(3,8,22,.14),rgba(3,8,22,.75));}
-.card{width:min(440px,100%);text-align:center;padding:25px 20px;border:1px solid rgba(255,255,255,.18);border-radius:27px;background:rgba(5,14,31,.84);box-shadow:0 20px 80px #0008;backdrop-filter:blur(15px)}
-h1{font-size:clamp(32px,9vw,48px);line-height:1;margin:0 0 8px;letter-spacing:-1.5px;color:var(--cyan);text-shadow:0 0 28px #36eaff66}
-.sub{color:#c4d5e9;font-size:14px;line-height:1.5;margin:10px 0 18px}
-button,select{font:inherit;color:white;background:#102843;border:1px solid #37617e;border-radius:14px;padding:12px 14px;font-weight:750}
-button:active{transform:scale(.97)}
-.primary{width:100%;border:0;background:linear-gradient(100deg,#00cde8,#4d8cff);color:#001423;font-size:18px;padding:14px;margin-top:8px}
-.options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.options button.selected{border-color:var(--gold);box-shadow:0 0 0 2px #ffd34d44}
-#touchControls{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);left:0;right:0;display:none;justify-content:space-between;align-items:end;padding:0 18px;pointer-events:none}
-.pad{display:flex;gap:10px;pointer-events:auto}
-.ctrl{width:62px;height:62px;border-radius:50%;background:rgba(4,15,32,.55);border:1px solid #c6f8ff88;font-size:27px;backdrop-filter:blur(8px);box-shadow:0 5px 20px #0005}
-#jump{width:76px;height:76px;background:rgba(0,207,236,.24);border-color:#54f5ff}
-#pauseBtn{pointer-events:auto;position:fixed;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 110px);border-radius:50%;width:44px;height:44px;padding:0;background:#07182bb8;display:none}
-#soundBtn{pointer-events:auto;position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 110px);border-radius:50%;width:44px;height:44px;padding:0;background:#07182bb8}
-.small{font-size:12px;color:#91a8c2}
-#toast{position:fixed;top:24%;left:0;right:0;text-align:center;font-size:24px;font-weight:900;color:var(--gold);text-shadow:0 2px 10px #000;pointer-events:none;opacity:0;transition:opacity .2s}
-@media (pointer:coarse){#touchControls{display:flex}}
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#071326;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;touch-action:none}canvas{display:block;width:100%;height:100%;touch-action:none}#hud{position:fixed;inset:0;pointer-events:none;color:#fff;text-shadow:0 2px 7px #00152b}#top{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:12px;right:12px;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.pill{background:#06152dcc;border:1px solid #83eaff66;border-radius:14px;padding:8px 12px;backdrop-filter:blur(8px);font-weight:800;box-shadow:0 4px 18px #0003}.small{font-size:12px;color:#b9eaff;font-weight:700;letter-spacing:.08em}.num{font-size:21px;line-height:1.2}.right{display:flex;gap:8px}.iconbtn{pointer-events:auto;border:1px solid #8beaff88;background:#071b30dd;color:white;border-radius:12px;width:44px;height:44px;font-size:20px;font-weight:900}#center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;pointer-events:auto;background:linear-gradient(#06142b44,#06142b99)}.panel{width:min(440px,100%);text-align:center;padding:25px 22px;border-radius:25px;background:linear-gradient(145deg,#071a34ee,#0b3352ee);border:1px solid #73e7ff88;box-shadow:0 20px 80px #0008}.logo{font-size:clamp(34px,9vw,56px);font-weight:1000;letter-spacing:-.06em;line-height:.95;color:#fff;text-shadow:0 0 22px #23d8ff,3px 4px 0 #0874b9}.logo span{color:#ffe66d}.subtitle{color:#c6eaff;margin:14px 0 18px;line-height:1.45}.mainbtn{width:100%;border:0;border-radius:15px;padding:15px 18px;background:linear-gradient(90deg,#00d5ff,#42ffbb);color:#032036;font-size:18px;font-weight:1000;box-shadow:0 7px 0 #087d9d;cursor:pointer}.tips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0 2px}.tip{font-size:12px;color:#d5f4ff;border:1px solid #78dfff55;background:#06172a99;padding:7px 10px;border-radius:10px}#toast{position:absolute;top:calc(env(safe-area-inset-top) + 94px);left:50%;transform:translateX(-50%);font-weight:900;background:#06172add;border:1px solid #80eaff88;padding:8px 14px;border-radius:99px;opacity:0;transition:opacity .2s;white-space:nowrap}#bottomhint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 14px);left:0;right:0;text-align:center;font-size:12px;color:#e0f8ffbb;letter-spacing:.04em}#loading{position:absolute;inset:0;display:grid;place-items:center;color:#c9f5ff;background:#071326;font-weight:800}#loading.hide{display:none}@media(min-width:700px){.pill{padding:10px 16px}.num{font-size:25px}}
 </style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js"}}</script>
 </head>
 <body>
-<div id="game"></div>
+<div id="loading">ЗАВАНТАЖЕННЯ 3D-СВІТУ…</div>
 <div id="hud">
- <div class="pill">🏁 <span id="score">0</span> м</div>
- <div id="rightHud"><div class="pill">🪙 <span id="coins">0</span></div><div class="pill">⭐ <span id="best">0</span></div></div>
+  <div id="top"><div class="pill"><div class="small">РАХУНОК</div><div class="num" id="score">0</div></div><div class="pill"><div class="small">МОНЕТИ</div><div class="num">🪙 <span id="coins">0</span></div></div><div class="right"><div class="pill"><div class="small">РЕКОРД</div><div class="num" id="best">0</div></div><button class="iconbtn" id="pause" aria-label="Пауза">Ⅱ</button></div></div>
+  <div id="toast"></div><div id="bottomhint">СВАЙП ← → ДЛЯ ПОВОРОТУ · ↑ СТРИБОК · ↓ КОВЗАННЯ</div>
+  <div id="center"><div class="panel"><div class="logo">НЕ ВПАДИ <span>3D</span></div><div class="subtitle" id="paneltext">Мчись крізь місто, ухиляйся від поїздів і бар'єрів та збирай монети!</div><button class="mainbtn" id="start">ПОЇХАЛИ!</button><div class="tips"><span class="tip">↔ ЗМІНА СМУГИ</span><span class="tip">↑ СТРИБОК</span><span class="tip">↓ КОВЗАННЯ</span></div></div></div>
 </div>
-<button id="soundBtn" aria-label="Увімкнути або вимкнути звук">🔊</button>
-<button id="pauseBtn" aria-label="Пауза">Ⅱ</button>
-<div id="toast"></div>
-<div id="touchControls">
- <div class="pad"><button class="ctrl" id="left" aria-label="Ліворуч">◀</button><button class="ctrl" id="right" aria-label="Праворуч">▶</button></div>
- <button class="ctrl" id="jump" aria-label="Стрибок">⬆</button>
-</div>
-<div id="overlay">
- <div class="card">
-  <h1>НЕ ВПАДИ 3D</h1>
-  <div class="sub" id="intro">Біжи, ухиляйся від перешкод, збирай монети та бонуси. Не дай собі впасти!</div>
-  <div class="small">ОБЕРИ ПЕРСОНАЖА</div>
-  <div class="options" id="skins">
-   <button data-skin="cyan" class="selected">🔹 Неон</button><button data-skin="gold">🟡 Золотий</button><button data-skin="pink">🩷 Рожевий</button><button data-skin="lime">🟢 Лайм</button>
-  </div>
-  <label class="small" for="difficulty">РІВЕНЬ СКЛАДНОСТІ</label><br>
-  <select id="difficulty" style="width:100%;margin-top:7px">
-   <option value="easy">Легкий</option><option value="normal" selected>Звичайний</option><option value="hard">Складний</option>
-  </select>
-  <button id="start" class="primary">▶ ГРАТИ</button>
-  <div class="sub" style="margin-bottom:0">Керування: кнопки на екрані або свайпи. Працює на iPhone та комп'ютері.</div>
- </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script>
-(()=> {
+<script type="module">
+import * as THREE from 'three';
 const $=id=>document.getElementById(id);
-if(!window.THREE){$('intro').textContent='Не вдалося завантажити 3D-бібліотеку. Перевір інтернет і перезавантаж сторінку.';$('start').disabled=true;return;}
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0x87d7f4); scene.fog=new THREE.Fog(0x87d7f4,24,105);
-const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,180);camera.position.set(0,5.4,9.8);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;$('game').appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe8faff,0x3c5471,2.1));
-const sun=new THREE.DirectionalLight(0xfff1c7,3.0);sun.position.set(-4,10,5);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
-const mat=(color,rough=.7,metal=0)=>new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal});
-const mats={road:mat(0x263c54),line:mat(0xe9f8ff,.35),grass:mat(0x39a875),white:mat(0xf2f5ff),dark:mat(0x17263b),red:mat(0xff4c5b,.35),gold:mat(0xffca3a,.25,.3),coin:mat(0xffd44a,.22,.65),purple:mat(0x9c67ff,.3,.2),boost:mat(0x36f3d0,.25,.25)};
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(200,200),mats.grass);floor.rotation.x=-Math.PI/2;floor.position.y=-.13;floor.position.z=-65;floor.receiveShadow=true;scene.add(floor);
-const road=new THREE.Mesh(new THREE.PlaneGeometry(7.8,190),mats.road);road.rotation.x=-Math.PI/2;road.position.set(0,-.08,-67);road.receiveShadow=true;scene.add(road);
-for(let x of [-1.3,1.3]){const stripe=new THREE.Mesh(new THREE.PlaneGeometry(.07,190),mats.line);stripe.rotation.x=-Math.PI/2;stripe.position.set(x,-.065,-67);scene.add(stripe);}
-for(let x of [-3.93,3.93]){const edge=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,190),mats.boost);edge.position.set(x,-.02,-67);scene.add(edge);}
-const lanes=[-2.25,0,2.25];let lane=1,playing=false,paused=false,score=0,coins=0,best=Number(localStorage.getItem('nv3d_best')||0),speed=13,elapsed=0,spawnTimer=0,coinTimer=0,boostTimer=0,shieldTimer=0,selectedSkin='cyan',soundOn=true,audioCtx=null;
+const loading=$('loading'), overlay=$('center'), startBtn=$('start'), paneltext=$('paneltext');
+let scene,camera,renderer,clock,player,playerGroup,groundSegments=[],objects=[],coinObjects=[],decor=[];
+let running=false,paused=false,gameOver=false,started=false,score=0,coins=0,best=Number(localStorage.getItem('nv3d_best')||0),speed=20,spawnTimer=0,coinTimer=0,worldDistance=0,lane=0,targetLane=0,jumpY=0,jumpV=0,slideTime=0,invuln=0;
 $('best').textContent=best;
-const skinColors={cyan:0x35eaff,gold:0xffd34d,pink:0xff62b6,lime:0x9dff58};
-const player=new THREE.Group();scene.add(player);player.position.set(0,.55,3);
-const ball=new THREE.Mesh(new THREE.SphereGeometry(.48,32,24),mat(skinColors[selectedSkin],.25,.25));ball.castShadow=true;player.add(ball);
-const ring=new THREE.Mesh(new THREE.TorusGeometry(.51,.045,10,40),mats.white);ring.rotation.x=Math.PI/2;ring.position.y=-.12;player.add(ring);
-const eyeMat=mat(0x081626,.3);for(let x of [-.15,.15]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.055,12,10),eyeMat);eye.position.set(x,.1,.42);player.add(eye);}
-const obstacles=[],collectibles=[],decor=[];
-function box(w,h,d,material,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;}
-function addObstacle(){let ln=Math.floor(Math.random()*3),type=Math.random();let mesh;
- if(type<.48){mesh=box(1.15,.9,.9,mats.red,lanes[ln],.45,-62);mesh.userData.kind='block';}
- else if(type<.78){mesh=box(1.35,.42,.75,mats.gold,lanes[ln],1.35,-62);mesh.userData.kind='bar';}
- else {mesh=new THREE.Mesh(new THREE.ConeGeometry(.58,1.2,5),mats.purple);mesh.position.set(lanes[ln],.6,-62);mesh.castShadow=true;scene.add(mesh);mesh.userData.kind='spike';}
- mesh.userData.lane=ln;obstacles.push(mesh);
+const laneX=[-2.6,0,2.6];
+const mats={road:new THREE.MeshStandardMaterial({color:0x26394b,roughness:.88}),rail:new THREE.MeshStandardMaterial({color:0x607e91,metalness:.65,roughness:.35}),white:new THREE.MeshStandardMaterial({color:0xe5f8ff,emissive:0x143449}),gold:new THREE.MeshStandardMaterial({color:0xffd84a,metalness:.7,roughness:.23,emissive:0x9a5b00}),red:new THREE.MeshStandardMaterial({color:0xff4b55,emissive:0x63121c}),blue:new THREE.MeshStandardMaterial({color:0x14cfff,emissive:0x07517a}),green:new THREE.MeshStandardMaterial({color:0x45ffb1,emissive:0x096b45})};
+function mat(color,roughness=.8,metalness=0,emissive=0){return new THREE.MeshStandardMaterial({color,roughness,metalness,emissive})}
+function box(w,h,d,material,x=0,y=0,z=0){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;return m}
+function init(){
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x80d7f5);scene.fog=new THREE.Fog(0x80d7f5,38,155);
+ camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,250);camera.position.set(0,5.6,10.5);camera.lookAt(0,1,-5);
+ renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;document.body.appendChild(renderer.domElement);
+ scene.add(new THREE.HemisphereLight(0xcdf6ff,0x40506b,2.0));let sun=new THREE.DirectionalLight(0xfff3d2,2.4);sun.position.set(-8,18,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-18;sun.shadow.camera.right=18;sun.shadow.camera.top=22;sun.shadow.camera.bottom=-22;scene.add(sun);
+ // distant city skyline
+ const skylineMat=[0x7192ad,0x567c9b,0x8ba6bb,0x4d6f8d].map(c=>mat(c,.95));
+ for(let side of [-1,1])for(let i=0;i<24;i++){let h=5+Math.random()*21,w=2+Math.random()*4,d=3+Math.random()*5,x=side*(8+Math.random()*19),z=-i*9-8;let b=box(w,h,d,skylineMat[i%skylineMat.length],x,h/2-1,z);scene.add(b);decor.push({mesh:b,kind:'building',baseZ:z});if(Math.random()>.25){for(let yy=1.5;yy<h-1;yy+=2.2){let win=box(.12,.8,.06,mat(0x9ff1ff,.3,0,0x164a69),x+side*(w/2+.035),yy,z+d/2+.04);scene.add(win);decor.push({mesh:win,kind:'window',baseZ:z})}}}
+ // endless road segments
+ for(let i=0;i<12;i++){let g=new THREE.Group();g.position.z=-i*12;g.add(box(9,.3,12,mats.road,0,-.18,0));for(let x of [-1.3,1.3])for(let j=0;j<3;j++)g.add(box(.055,.025,2.1,mats.white,x,.0,-4+j*4));for(let x of [-4.65,4.65])g.add(box(.22,.5,12,mat(0x22c8f3,.5,.2,0x063e65),x,.05,0));scene.add(g);groundSegments.push(g)}
+ // side sidewalks and lights
+ for(let side of [-1,1])for(let i=0;i<14;i++){let z=-i*10-3;let post=box(.16,3.6,.16,mat(0x344d63,.4,.5),side*5.7,1.7,z);let lamp=box(1.2,.12,.3,mat(0x9bf6ff,.3,.2,0x47dfff),side*5.25,3.5,z);scene.add(post,lamp);decor.push({mesh:post,kind:'lamp',baseZ:z},{mesh:lamp,kind:'lamp',baseZ:z})}
+ makePlayer();clock=new THREE.Clock();window.addEventListener('resize',resize);loading.classList.add('hide');animate();
 }
-function addCoinLine(){let ln=Math.floor(Math.random()*3),count=4+Math.floor(Math.random()*3);for(let i=0;i<count;i++){const m=new THREE.Mesh(new THREE.TorusGeometry(.25,.085,10,22),mats.coin);m.position.set(lanes[ln],.95,-58-i*1.35);m.rotation.y=Math.PI/2;m.castShadow=true;m.userData={lane:ln,kind:'coin'};scene.add(m);collectibles.push(m);}}
-function addBonus(){let ln=Math.floor(Math.random()*3),isShield=Math.random()<.5;const m=new THREE.Mesh(new THREE.OctahedronGeometry(.38),isShield?mats.boost:mats.purple);m.position.set(lanes[ln],1,-62);m.userData={lane:ln,kind:isShield?'shield':'magnet'};scene.add(m);collectibles.push(m);}
-function addDecor(){for(let side of [-1,1]){let z=-75-Math.random()*22;let trunk=new THREE.Mesh(new THREE.CylinderGeometry(.12,.2,1.8,7),mat(0x76503a));trunk.position.set(side*(5.4+Math.random()*2),.9,z);trunk.castShadow=true;scene.add(trunk);let crown=new THREE.Mesh(new THREE.SphereGeometry(.8,8,7),mat(Math.random()<.5?0x1f986a:0x2dbb78));crown.scale.set(1.25,.7,1);crown.position.set(trunk.position.x,2,z);scene.add(crown);decor.push({trunk,crown});}}
-for(let i=0;i<16;i++)addDecor();
-function tone(freq,dur=.08,type='sine',vol=.035){if(!soundOn)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(vol,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur);}catch(e){}}
-function music(){if(!soundOn)return; tone(220,.12,'triangle',.009);}
-function toast(t){$('toast').textContent=t;$('toast').style.opacity=1;setTimeout(()=>$('toast').style.opacity=0,850);}
-function updateHud(){$('score').textContent=Math.floor(score);$('coins').textContent=coins;$('best').textContent=best;}
-function start(){paused=false;$('pauseBtn').textContent='Ⅱ';$('pauseBtn').style.display='block';score=0;coins=0;elapsed=0;spawnTimer=.5;coinTimer=2;boostTimer=8;shieldTimer=0;lane=1;speed=Number($('difficulty').value==='easy'?10:$('difficulty').value==='hard'?17:13);player.position.set(0,.55,3);player.visible=true;for(const o of obstacles)scene.remove(o);obstacles.length=0;for(const c of collectibles)scene.remove(c);collectibles.length=0;playing=true;$('overlay').style.display='none';updateHud();tone(660,.16,'triangle');}
-function endGame(){playing=false;paused=false;$('pauseBtn').style.display='none';best=Math.max(best,Math.floor(score));localStorage.setItem('nv3d_best',best);updateHud();$('intro').innerHTML=`Твій результат: <b>${Math.floor(score)} м</b><br>Монет зібрано: <b>${coins}</b><br>Рекорд зберігається на цьому пристрої.`;$('start').textContent='↻ ЩЕ РАЗ';$('overlay').style.display='flex';tone(110,.35,'sawtooth',.05);}
-function move(d){if(!playing)return;lane=Math.max(0,Math.min(2,lane+d));tone(300,.045,'square',.012);}
-function jump(){if(!playing)return;if(player.position.y<.7){player.userData.vy=7.5;tone(500,.09,'triangle');}}
-function key(e){if(['ArrowLeft','a','A'].includes(e.key)){e.preventDefault();move(-1)}if(['ArrowRight','d','D'].includes(e.key)){e.preventDefault();move(1)}if(['ArrowUp',' ','w','W'].includes(e.key)){e.preventDefault();jump()}if(e.key==='Enter'&&!playing)start();}
-addEventListener('keydown',key);
-$('left').addEventListener('pointerdown',e=>{e.preventDefault();move(-1)});$('right').addEventListener('pointerdown',e=>{e.preventDefault();move(1)});$('jump').addEventListener('pointerdown',e=>{e.preventDefault();jump()});
-let tx=0,ty=0;renderer.domElement.addEventListener('touchstart',e=>{tx=e.changedTouches[0].clientX;ty=e.changedTouches[0].clientY;},{passive:true});renderer.domElement.addEventListener('touchend',e=>{if(!playing)return;let dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>30&&Math.abs(dx)>Math.abs(dy))move(dx>0?1:-1);else if(dy<-25)jump();},{passive:true});
-$('start').addEventListener('click',start);$('pauseBtn').addEventListener('click',()=>{if(!playing)return;paused=!paused;$('pauseBtn').textContent=paused?'▶':'Ⅱ';toast(paused?'⏸ ПАУЗА':'▶ ПРОДОВЖУЄМО');});$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊':'🔇';if(soundOn){tone(660,.1);}});
-document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',()=>{selectedSkin=b.dataset.skin;ball.material.color.setHex(skinColors[selectedSkin]);document.querySelectorAll('[data-skin]').forEach(x=>x.classList.toggle('selected',x===b));tone(480,.06);}));
-function update(dt){if(!playing||paused)return;elapsed+=dt;score+=dt*speed*.6;speed+=dt*.035;spawnTimer-=dt;coinTimer-=dt;boostTimer-=dt;if(spawnTimer<=0){addObstacle();spawnTimer=Math.max(.52,1.12-(speed-10)*.025)+Math.random()*.38;}if(coinTimer<=0){addCoinLine();coinTimer=3+Math.random()*2;}if(boostTimer<=0){addBonus();boostTimer=11+Math.random()*7;}
- player.position.x+=(lanes[lane]-player.position.x)*Math.min(1,dt*12);player.rotation.z=(lanes[lane]-player.position.x)*-.12;
- player.userData.vy=(player.userData.vy||0)-18*dt;player.position.y+=player.userData.vy*dt;if(player.position.y<.55){player.position.y=.55;player.userData.vy=0;}
- ball.rotation.x+=dt*speed*.18;ring.rotation.z+=dt*1.4;
- for(let i=obstacles.length-1;i>=0;i--){let o=obstacles[i];o.position.z+=speed*dt;if(o.position.z>5){scene.remove(o);obstacles.splice(i,1);continue;}let near=Math.abs(o.position.z-3)<.68&&Math.abs(player.position.x-o.position.x)<.82;if(near){if(shieldTimer>0){shieldTimer=0;scene.remove(o);obstacles.splice(i,1);toast('🛡️ ЩИТ врятував!');tone(800,.15);continue;}if(o.userData.kind==='bar'&&player.position.y>1.25)continue;if(player.position.y>1.25)continue;endGame();return;}}
- for(let i=collectibles.length-1;i>=0;i--){let c=collectibles[i];c.position.z+=speed*dt;c.rotation.y+=dt*2.6;c.rotation.x+=dt;if(c.position.z>5){scene.remove(c);collectibles.splice(i,1);continue;}if(Math.abs(c.position.z-3)<.8&&Math.abs(player.position.x-c.position.x)<.85){if(c.userData.kind==='coin'){coins++;score+=8;tone(780,.07,'sine',.025);}else if(c.userData.kind==='shield'){shieldTimer=8;toast('🛡️ ЩИТ на 8 секунд');tone(620,.2);}else{speed=Math.max(9,speed-3);score+=25;toast('⚡ БОНУС!');tone(900,.18);}scene.remove(c);collectibles.splice(i,1);updateHud();}}
- if(shieldTimer>0){shieldTimer-=dt;player.children[0].material.emissive.setHex(0x114455);}else player.children[0].material.emissive.setHex(0x000000);
- for(const d of decor){d.trunk.position.z+=speed*dt*.78;d.crown.position.z=d.trunk.position.z;if(d.trunk.position.z>10){let z=-100-Math.random()*25;d.trunk.position.z=z;d.crown.position.z=z;}}
- if(Math.floor(elapsed)%8===0&&Math.floor(elapsed)!==Math.floor(elapsed-dt)){music();}
- updateHud();
+function makePlayer(){playerGroup=new THREE.Group();playerGroup.position.set(0,0,2);scene.add(playerGroup);player=new THREE.Group();playerGroup.add(player);
+ const skin=mat(0xffc89a),hood=mat(0x11c9ff,.45,.05,0x06405b),pants=mat(0x18283d),shoe=mat(0xf6fbff,.3),dark=mat(0x182434);
+ let torso=box(.72,.88,.38,hood,0,1.48,0);torso.name='torso';player.add(torso);
+ let head=new THREE.Mesh(new THREE.SphereGeometry(.29,16,12),skin);head.position.set(0,2.12,0);head.castShadow=true;player.add(head);
+ let hair=box(.53,.16,.48,dark,0,2.34,-.015);player.add(hair);
+ for(let s of [-1,1]){let arm=box(.22,.72,.24,hood,s*.49,1.48,0);arm.rotation.z=s*-.12;arm.name='arm'+s;player.add(arm);let leg=box(.27,.72,.3,pants,s*.2,.55,0);leg.name='leg'+s;player.add(leg);let foot=box(.31,.16,.45,shoe,s*.2,.17,-.08);foot.name='foot'+s;player.add(foot)}
+ let backpack=box(.48,.55,.2,mat(0xffa42a,.6,0,0x7b3700),0,1.47,.27);player.add(backpack);
+ player.userData.parts={torso};
 }
-let last=performance.now();function loop(now){requestAnimationFrame(loop);let dt=Math.min(.04,(now-last)/1000);last=now;update(dt);camera.position.x+=(player.position.x*.18-camera.position.x)*dt*2;camera.lookAt(player.position.x*.12,.9,-4);renderer.render(scene,camera);}requestAnimationFrame(loop);
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));});
-})();
+function addObstacle(type,lane,z){let g=new THREE.Group();g.position.set(laneX[lane],0,z);let hitH=1.5,hitW=1.65;
+ if(type==='barrier'){g.add(box(1.6,.75,.5,mats.red,0,.42,0));g.add(box(.12,.92,.12,mat(0xffd6dc),-.48,.42,.27));g.add(box(.12,.92,.12,mat(0xffd6dc),.48,.42,.27));hitH=.95}
+ else if(type==='overhead'){g.add(box(2.05,.28,.55,mat(0xffb13b,.45,0,0x6c2600),0,1.35,0));for(let x of [-.8,.8])g.add(box(.16,1.5,.18,mat(0x34465b),x,.72,0));hitH=1.7}
+ else if(type==='train'){g.add(box(2.1,2.9,5.4,mat(0x176fa1,.32,.25,0x06314f),0,1.48,0));g.add(box(1.55,.75,.08,mat(0x8df4ff,.2,.15,0x31bde5),0,2.05,-2.75));g.add(box(1.7,.12,.1,mat(0xffdd69,.3,0,0x8c5a00),0,.45,-2.76));for(let x of [-.65,.65]){let wheel=new THREE.Mesh(new THREE.CylinderGeometry(.17,.17,.13,12),mat(0x202d3d,.3,.5));wheel.rotation.z=Math.PI/2;wheel.position.set(x,.28,1.2);g.add(wheel)}hitH=3.1;hitW=2.15}
+ scene.add(g);objects.push({mesh:g,type,lane,hitH,hitW,hitZ:type==='train'?2.6:.5,passed:false});}
+function addCoin(lane,z,y=1.25){let m=new THREE.Mesh(new THREE.TorusGeometry(.34,.105,10,20),mats.gold);m.position.set(laneX[lane],y,z);m.rotation.y=Math.PI/2;m.castShadow=true;scene.add(m);coinObjects.push({mesh:m,taken:false,baseY:y})}
+function spawnWave(){let lane=Math.floor(Math.random()*3),r=Math.random();let type=r<.42?'barrier':r<.7?'overhead':'train';addObstacle(type,lane,-95);if(Math.random()<.72){let safe=(lane+1+Math.floor(Math.random()*2))%3;for(let i=0;i<6;i++)addCoin(safe,-79-i*2.7,1.25+((i===2||i===3)?0.35:0))}else for(let i=0;i<5;i++)addCoin(lane,-78-i*2.8,1.15)}
+function toast(msg){let t=$('toast');t.textContent=msg;t.style.opacity=1;clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.style.opacity=0,900)}
+function startGame(){clearWorldObjects();score=0;coins=0;speed=20;spawnTimer=.7;coinTimer=1;worldDistance=0;lane=targetLane=1;jumpY=jumpV=slideTime=invuln=0;player.position.y=0;player.scale.set(1,1,1);running=true;paused=false;gameOver=false;started=true;overlay.style.display='none';$('pause').textContent='Ⅱ';clock.getDelta();updateHud()}
+function clearWorldObjects(){for(const o of objects)scene.remove(o.mesh);for(const c of coinObjects)scene.remove(c.mesh);objects=[];coinObjects=[]}
+function endGame(){running=false;gameOver=true;best=Math.max(best,Math.floor(score));localStorage.setItem('nv3d_best',best);$('best').textContent=best;paneltext.innerHTML=`Твій рахунок: <b>${Math.floor(score)}</b><br>Зібрано монет: <b>${coins}</b><br>Рекорд: <b>${best}</b>`;startBtn.textContent='ЩЕ РАЗ';overlay.style.display='flex';toast('ОЙ! СПРОБУЙ ЩЕ РАЗ')}
+function togglePause(){if(!started||gameOver)return;if(running){running=false;paused=true;paneltext.textContent='Перерва. Готовий продовжити забіг?';startBtn.textContent='ПРОДОВЖИТИ';overlay.style.display='flex';$('pause').textContent='▶'}else if(paused){running=true;paused=false;overlay.style.display='none';$('pause').textContent='Ⅱ';clock.getDelta()}}
+function move(dir){if(!running)return;if(dir==='left')targetLane=Math.max(0,targetLane-1);if(dir==='right')targetLane=Math.min(2,targetLane+1);if(dir==='up'&&jumpY<.05&&slideTime<=0){jumpV=8.7;toast('СТРИБОК!')}if(dir==='down'&&jumpY<.2){slideTime=.72;toast('КОВЗАННЯ!')}}
+let sx=0,sy=0;rendererTouchSetup();function rendererTouchSetup(){document.addEventListener('touchstart',e=>{if(e.target.closest('button'))return;let t=e.changedTouches[0];sx=t.clientX;sy=t.clientY},{passive:true});document.addEventListener('touchend',e=>{if(e.target.closest('button'))return;let t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;if(Math.abs(dx)>Math.abs(dy))move(dx>0?'right':'left');else move(dy<0?'up':'down')},{passive:true});document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','a','d','w','s'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')move('left');if(e.key==='ArrowRight'||e.key==='d')move('right');if(e.key==='ArrowUp'||e.key==='w'||e.key===' ')move('up');if(e.key==='ArrowDown'||e.key==='s')move('down');if(e.key==='Escape')togglePause()})}
+startBtn.addEventListener('click',()=>{if(paused){running=true;paused=false;overlay.style.display='none';$('pause').textContent='Ⅱ';clock.getDelta()}else startGame()});$('pause').addEventListener('click',togglePause);
+function updateHud(){$('score').textContent=Math.floor(score);$('coins').textContent=coins}
+function update(dt){if(!running)return;speed=Math.min(36,20+score*.003);score+=dt*speed*.8;worldDistance+=speed*dt;spawnTimer-=dt;if(spawnTimer<=0){spawnWave();spawnTimer=Math.max(.72,1.35-(speed-20)*.025)+Math.random()*.25}playerGroup.position.x=THREE.MathUtils.damp(playerGroup.position.x,laneX[targetLane],13,dt);playerGroup.position.y=jumpY;
+ if(jumpY>0||jumpV>0){jumpY+=jumpV*dt;jumpV-=20*dt;if(jumpY<=0){jumpY=0;jumpV=0}}
+ if(slideTime>0){slideTime-=dt;player.scale.y=THREE.MathUtils.damp(player.scale.y,.48,18,dt)}else player.scale.y=THREE.MathUtils.damp(player.scale.y,1,12,dt);
+ const runT=performance.now()*.012;for(const child of player.children){if(child.name.startsWith('leg'))child.rotation.x=Math.sin(runT+(child.name==='leg1'?Math.PI:0))*.55*(slideTime>0?.15:1);if(child.name.startsWith('arm'))child.rotation.x=-Math.sin(runT+(child.name==='arm1'?Math.PI:0))*.48*(slideTime>0?.15:1)}player.rotation.z=THREE.MathUtils.damp(player.rotation.z,(targetLane-lane)*-.04,8,dt);lane=targetLane;
+ for(const g of groundSegments){g.position.z+=speed*dt;if(g.position.z>7)g.position.z-=groundSegments.length*12}
+ for(const d of decor){d.mesh.position.z+=speed*dt;if(d.mesh.position.z>12)d.mesh.position.z-=240}
+ for(let i=objects.length-1;i>=0;i--){let o=objects[i];o.mesh.position.z+=speed*dt;if(!o.passed&&o.mesh.position.z>3.7){o.passed=true;score+=8}if(o.mesh.position.z>13){scene.remove(o.mesh);objects.splice(i,1);continue}let dz=Math.abs(o.mesh.position.z-playerGroup.position.z);let dx=Math.abs(o.mesh.position.x-playerGroup.position.x);if(dz<o.hitZ&&dx<1.08){let playerHeight=jumpY+(slideTime>0?.65:2.2);let hit=false;if(o.type==='barrier')hit=jumpY<.78&&slideTime<=0;else if(o.type==='overhead')hit=slideTime<=0&&playerHeight>1.15;else hit=jumpY<2.95;if(hit){endGame();return}}}
+ for(let i=coinObjects.length-1;i>=0;i--){let c=coinObjects[i];c.mesh.position.z+=speed*dt;c.mesh.rotation.z+=dt*4;c.mesh.rotation.y+=dt*2;if(!c.taken&&Math.abs(c.mesh.position.z-playerGroup.position.z)<1.1&&Math.abs(c.mesh.position.x-playerGroup.position.x)<1.05&&Math.abs(c.mesh.position.y-(jumpY+1.1))<1.5){c.taken=true;coins++;score+=25;scene.remove(c.mesh);coinObjects.splice(i,1);continue}if(c.mesh.position.z>12){scene.remove(c.mesh);coinObjects.splice(i,1)}}
+ camera.position.x=THREE.MathUtils.damp(camera.position.x,playerGroup.position.x*.25,2.8,dt);camera.position.y=5.7+jumpY*.12;camera.lookAt(playerGroup.position.x*.15,1.05,-5);updateHud();}
+function resize(){if(!renderer)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7))}
+function animate(){requestAnimationFrame(animate);let dt=Math.min(clock?clock.getDelta():.016,.045);if(clock)update(dt);if(player&&running){player.rotation.y=Math.sin(performance.now()*.003)*.025}renderer.render(scene,camera)}
+init();
 </script>
-</body></html>
+</body>
+</html>
